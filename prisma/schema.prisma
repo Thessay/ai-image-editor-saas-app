@@ -3,7 +3,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 // NOTE: When using mysql or sqlserver, uncomment the //@db.Text annotations in model Account below
@@ -13,18 +12,6 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-model Post {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  createdBy   User   @relation(fields: [createdById], references: [id])
-  createdById String
-
-  @@index([name])
 }
 
 model User {
@@ -37,7 +24,10 @@ model User {
   updatedAt     DateTime  @default(now()) @updatedAt
   sessions      Session[]
   accounts      Account[]
-  posts         Post[]
+  projects      Project[]
+  credits       Int       @default(10)
+
+
 
   @@unique([email])
   @@map("user")
@@ -86,4 +76,19 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+}
+
+model Project{
+  id          String    @id @default(cuid())
+  name        String?
+  imageUrl    String
+  imageKitId  String
+  filePath    String
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+
+  @@map("project")
 }
